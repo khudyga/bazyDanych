@@ -1,0 +1,353 @@
+♦ XAMPP
+mysql  -u root  -p
+
+show databases;
+show tables;
+SELECT database(); - sprawdza na ktorej db teraz pracujemy
+DESCRIBE tabela; - sprawdza strukture
+
+LIKE - tekst
+= - liczby, daty itp
+
+CREATE DATABASE nazwa;
+- tworzy baze danych
+
+USE nazwa
+-przelaczanie sie na dana baze danych
+
+DROP DATABASE nazwa;
+-usuwanie bazy danych
+
+ALTER DATABASE nazwa READ ONLY = 1;
+- sprawia ze mozemy tylko odczytywac / jesli chcemy usunac to zmieniamy na 0
+
+CREATE TABLE nazwa (kolumna_1 typ, kolumna_2 typ, kolumna_3 typ);
+-tworzenie tabeli
+
+♦ TYPY
+
+int - liczby całkowite (5)
+decimal / numeric - liczby dziesiętne (10.5)
+float - zmiennoprzecinkowe (10.5)
+
+char(liczba znaków) - stała ilość znaków
+varchar(liczba znaków) - zmienna długość znaków
+text - długi ciąg o zmiennej długości
+
+date - (yyyy-mm-dd)
+datetime - (YYYY-MM-DD HH:MI:SS)
+timestamp - (2024-08-21 14:30:00 UTC)
+
+boolean - true/false
+
+♦ PODSTAWOWE ZAPYTANIA 
+
+SELECT * FROM kolumna;
+-wyswietla wszystkie wierze
+
+RENAME TABLE tabela TO tabela2;
+- zmienia nazwe tabeli
+
+DROP TABLE tabela;
+- usuwa tabele
+
+ALTER TABLE tabela ADD kolumna typ;
+- dodanie kolumny
+
+ALTER TABLE tabela ADD (kolumna_1 typ, kolumna_2 typ);
+- dodanie kilku kolumn
+
+ALTER TABLE tabela RENAME kolumna TO kolumna2;
+- zmienia nazwe kolumny
+
+ALTER TABLE tabela CHANGE stara_nazwa nowa_nazwa typ;
+- zmienia nazwe kolumny 
+
+ALTER TABLE nazwa_tabeli RENAME TO nowa_nazwa_tabeli;
+- zmienia nazwe tabeli
+
+ALTER TABLE tabela MODIFY COLUMN kolumna TYP;
+- zmienia typ kolumny albo jej wielkosc varchar(10)->varchar(30)
+
+ALTER TABLE tabela MODIFY kolumna typ AFTER kolumna2;
+- pozwala na przeniesienie kolumy
+
+ALTER TABLE tabela MODIFY kolumna typ FIRST;
+- kolumna jest pierwsza
+
+ALTER TABLE tabela DROP COLUMN kolumna;
+- usuwa kolumne z tabeli
+
+♦ WSTAWIANIE DANYCH DO TABELI
+
+INSERT INTO tabela VALUES (1, "tekst", 10.5, "2024-08-21"), (2, "tekst2", 20.5, "2024-08-22");
+- wstawianie danych do  tabeli (można pisać kilka wierszy)
+
+♦ WYBIERANIE DANYCH Z TABELI
+
+SELECT kolumna FROM tabela;
+- wybieranie poszczegolnych kolmn z tabeli
+
+SELECT kolumna FROM tabela WHERE kolumna = warunek;
+
+SELECT kolumna FROM tabela WHERE kolumna = warunek; (< > = != [IS NULL] [IS NOT NULL] <>) 
+
+♦ UPDATE
+
+UPDATE tabela SET kolumna = warunek WHERE kolumna = warunek;
+- zmienia dane w kolumnie która ma jakies tam dane
+
+UPDATE tabela SET kolumna = warunek;
+
+♦ DELETE (kolejne dodawane do tabeli rekordy otrzymają numery id będące kontynuacją tych usuniętych.)
+
+DELETE FROM tabela;
+- usuwa wszystko z tabeli
+
+DELETE FROM tabela WHERE kolumna = warunek;
+- usuwa z tabeli wiersz 
+
+♦ TRUNCATE (numerację rozpoczynamy od nowa (od 1))
+
+TRUNCATE TABLE tabela;
+
+♦ CURRENT DATE 
+
+INSERT INTO tabela VALUES (CURRENT_TIME(), CURRENT_DATE() - 1, NOW());
+
+♦ UNIQUE
+
+CREATE TABLE tabela (kolumna_1 typ UNIQUE, kolumna_2 typ);
+- przez UNIQUE nie może się powtarzać wartość (nie mogą być np 2 produkty o tej samej nazwie);
+
+ALTER TABLE tabela ADD CONSTRAINT UNIQUE(kolumna);
+- zmodyfikowanie kolumny aby dodać tam UNIQUE
+
+♦ NOT NULL
+CREATE TABLE tabela (kolumna_1 typ NOT NULL, kolumna_2 typ);
+- kolumna nie może być pusta
+
+ALTER TABELE tabela MODIFY kolumna typ NOT NULL;
+-zmienia na NOT NULL w gotowej kolumnie
+
+♦ CHECK (własne constrainty)
+
+CREATE TABLE tabela (kolumna_1 typ, kolumna_2 typ, CONSTRAINT nazwa CHECK (warunek));
+- warunek to np kolumna > 10 albo kolumna = "tekst"
+
+ALTER TABLE tabela ADD CONSTRAINT nazwa CHECK(warunek);
+- dodanie własnego constraintu do istniejącej tabeli
+
+ALTER TABLE tabela DROP CHECK nazwa;
+- usuwa constraint z tabeli;
+
+♦ DEFAULT
+
+CREATE TABLE tabela (kolumna_1 typ, kolumna_2 typ DEFAULT "tekst");
+- jesli nie podamy danych to same sie ustawia na domyslne
+ 
+ALTER TABLE tabela ALTER kolumna SET DEFAULT "tekst";
+- zmiana istniejącej kolumny
+
+INSERT INTO tabela (kolumna_1, kolumna_2) VALUES ("", "");
+- jesli chcemy dodac dane do tabeli w ktorej jest domyslna wartosc to musimy napisac obok nazwy tabeli jakie kolumny bierzemy pod uwagę w dodawaniu danych
+
+♦ PRIMARY KEYS
+- w jednej tabeli może być tylko jeden PK, do którego można się później odwoływać
+- NOT NULL / UNIQUE
+
+CREATE TABLE tabela (kolumna_1 typ PRIMARY KEY,kolumna_2 typ);
+
+ALTER TABLE tabela ADD CONSTRAINT PRIMARY KEY(kolumna);
+- dodanie klucza głównego do istniejącej kolumny
+
+♦ AUTO INCREMENT
+
+CREATE TABLE tabela (kolumna_1 typ PRIMARY KEY AUTO_INCREMENT, kolumna_2 typ);
+- klucz głowny bedzie sam sie dodawal i inkrementowal o 1 (mozna pomijac jak w DEFAULT ale trzeba pisac nazwy kolumn)
+
+ALTER TABLE tabela AUTO_ INCREMENT = 1000;
+- dodanie A_I do istniejącej kolumny (zacznie sie od 1000)
+
+♦ FOREIGN KEYS
+- umożliwia tworzenie relacji pomiędzy tabelami
+
+CREATE TABLE klient (id_klienta int PRIMARY KEY AUTO_INCREMENT, imie varchar(30), nazwisko varchar(30));
+
+CREATE TABLE zamówienia (id_zamówienia int PRIMARY KEY AUTO_INCREMENT, id_klienta int, FOREIGN KEY(id_klienta) REFERENCES klient(id_klienta));
+
+ALTER TABLE tabela DROP FOREIGN KEY tabela_ibfk_1;
+- usuwa klucz obcy z tabeli
+
+ALTER TABLE tabela ADD CONSTRAINT fk_id_klienta FOREIGN KEY(id_klienta) REFERENES klient(id_klienta);
+- zmiana nazwy klucza obcego
+
+♦ JOINS
+- łączenie kolumn z różnych tabeli
+
+- INNER JOIN / JOIN
+SELECT * FROM tabela_1 INNER JOIN tabela_2 ON tabela_1.id = tabela_2.id;
+
+- LEFT JOIN
+- zwraca wszystkie wiersze lewej relacji i uzupełnia danymi z prawej
+SELECT * FROM tabela_1 LEFT JOIN tabela_2 ON tabela_1.id = tabela_2.id;
+
+- RIGHT JOIN
+- zwraca wszystkie wiersze prawej relacji i uzupełnia danymi z lewej
+SELECT * FROM tabela_1 RIGHT JOIN tabela_2 ON tabela_1.id = tabela_2.id;
+
+- CROSS JOIN
+- zwraca wszystkie możliwe kombinacje (iloczyn kartezjański) elementów relacji z lewej i prawej strony wyrażenia
+SELECT * FROM tabela_1 CROSS JOIN tabela_2 ON tabela_1.id = tabela_2.id;
+
+♦ FUNCTIONS
+
+COUNT() - liczy ile wierszy jest w kolumnie
+MAX() - znajduje max liczbe
+MIN() - znajduje min liczbe
+AVG() - liczy srednia
+SUM() - sumuje wiersze
+CONCAT() - tworzy kolumne z połączonych innych kolumn np imie+nazwisko=imienazwisko
+
+
+SELECT COUNT(kolumna) AS nazwa FROM tabela;
+
+♦ OPERATORY LOGICZNE
+
+- AND
+SELECT * FROM tabela WHERE warunek AND warunek;
+- wybierze tylko te w których oba warunki są prawdziwe
+
+- OR
+SELECT * FROM tabela WHERE warunek OR warunek;
+- tylko jeden musi być prawdziwy
+
+- NOT
+SELECT * FROM tabela WHERE warunek NOT warunek;
+- tam gdzie nie ma warunku
+
+SELECT * FROM tabela WHERE warunek NOT warunek AND NOT warunek;
+
+- BETWEEN
+SELECT * FROM tabela WHERE warunek BETWEEN warunek;
+- pomiędzy dwoma warunkami
+
+- IN
+-służy do określania zbioru wartości
+
+SELECT * FROM tabela WHERE kolumna IN (1,2);
+
+- DISTINCT
+- niepowtarzające się dane
+
+SELECT DISTINCT kolumna FROM tabela;
+
+- EXISTS
+- nie wiem 
+
+- LIKE
+- do wyszukiwania wzorca
+
+
+
+♦ ZASTĘPOWANIE ZNAKÓW
+- zastępujemy = -> LIKE
+
+% - zastępuje ciąg znaków
+SELECT * FROM tabela WHERE imie LIKE "k%";
+- wybierze imiona na litere k (mogą być daty, liczby lub kilka znaków)
+
+_ - zastępuje jeden znak
+SELECT * FROM tabela WHERE data LIKE "____-04-__";
+- wszystkie daty w kwietniu
+
+♦ ORDER BY
+- sortuje
+- można porównywać do wielu kolumn jak np wartości się powatrzają
+
+DESC - malejąco
+ASC - rosnąco (domyślnie)
+
+SELECT * FROM table ORDER BY kolumnac DESC; 
+- (od z do a)
+
+♦ LIMIT 
+- wyznacza limit w np wybieraniu danych
+- liczy od 1
+- gdy podajemy 2 liczby to liczy po pierwszej liczbie czyli jak mamy 3 wiersze i damy 2,1 to wyswietli nam tylko 3 wiersz
+ 
+SELECT * FROM tabela ORDER BY kolumna LIMIT 2;
+- pokazuje tylko 2 wiersze
+
+SELECT * FROM tabela ORDER BY kolumna LIMIT Y, X;
+- pokazuje X wierszy po Y wierszu
+
+♦ UNIONS
+- łączą dwa selecty
+-musza miec taka sama liczbe kolumn
+
+SELECT * FROM tabela_1 UNION SELECT * FROM tabela_2;
+- pokażą sie wszystkie wiersze z tabeli 1 i 2
+
+- jesli chcemy widziec powtrzajace sie wiersze to UNION ALL
+
+♦ GROUP BY
+- zazwyczaj używa się z funkcjami
+- "grupuje" dane czyli wyswietla tylko jeden raz dany powtarzajacy sie typ i mozna do niego dopisac funkcje
+
+SELECT nazwa_produktu, AVG(cena) as cena FROM `produkty` group by nazwa_produktu;
+- grupuje wszystkie rekordy, które mają tę samą wartość w kolumnie Product, a SUM(Quantity) sumuje ilość dla każdej grupy. W ten sposób otrzymujesz podsumowanie sprzedanych ilości dla każdego produktu
+
+♦ HAVING
+- nie wiem
+
+SELECT * from tabela HAVING warunek;
+
+♦ UŻYTKOWNICY
+
+CREATE USER 'uzytkownik'@'localhost' IDENTIFIED BY 'haslo';
+- tworzenie użytkownika
+
+DROP USER nazwa_uzytkownika;
+- usuwanie użytkownika
+
+♦ CONSTRAINTY
+
+ALL PRIVILEGES - Nadanie wszystkich uprawnień oprócz GRANT OPTION
+ALTER - Nadanie uprawnień do modyfikacji struktury tabeli
+CREATE - Nadanie uprawnień do tworzenia obiektów, czyli baz, tabel, kolumn
+DELETE - Nadanie uprawnień do usuwania wierszy w wybranej tabeli
+DROP - DROP Nadanie uprawnień do usuwania tabel
+INSERT - Nadanie uprawnień do wstawiania wierszy do tabel
+SELECT - Nadanie uprawnień do zadawania zapytań
+SHOW DATABASES - Nadanie uprawnień do wyświetlania listy baz danych
+UPDATE - Nadanie uprawnień do modyfikacji zawartości tabel
+USAGE - Nadanie jedynie dostępu do bazy, bez żadnych dodatkowych uprawnień
+
+GRANT lista_uprawnień ON tabela TO uzytkownik;
+- nadanie uprawnień
+
+REVOKE lista_uprawnień ON tabela FROM uzytkownik;
+- odebranie uprawnień
+
+GRANT ALL PRIVILEGES ON * . * TO 'uzytkownik'@'localhost';
+- wszystkie uprawnienia do wszystkich baz i wszystkich tabel
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
