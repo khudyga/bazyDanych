@@ -1,0 +1,29 @@
+mysql -u root
+
+show databases;
+
+create database ksiegarnia;
+
+use ksiegarnia;
+
+show tables;
+
+KLIENCI
+create table klienci(id_klienta int primary key auto_increment, imie varchar(30), nazwisko varchar(30), email varchar(30), numer_telefonu varchar(9));
+
+AUTORZY
+create table autorzy(id_autora int auto_increment primary key, imie_autora varchar(30), nazwisko_autora varchar(30));
+
+KATEGORIE
+create table kategorie(id_kategorii int auto_increment primary key, nazwa_kategorii varchar(30));
+
+KSIAZKI
+create table ksiazki(id_ksiazki int auto_increment primary key, tytul varchar(30), cena decimal(10,2), rok_wydania int, dostepnosc enum("Dostepna","Niedostepna"), id_autora int, foreign key(id_autora) references autorzy(id_autora), id_kategorii int, foreign key(id_kategorii) references kategorie(id_kategorii));
+
+ZAMOWIENIA
+create table zamowienia(id_zamowienia int auto_increment primary key, data_zamowienia date, id_klienta int, foreign key(id_klienta) references klienci(id_klienta));
+
+SZCZEGOLY ZAMOWIENIA
+create table szczegoly_zamowienia(id_szczegolu int primary key auto_increment, id_zamowienia int, foreign key(id_zamowienia) references zamowienia(id_zamowienia), id_ksiazki int, foreign key(id_ksiazki) references ksiazki(id_ksiazki), ilosc int);
+
+SELECTY
